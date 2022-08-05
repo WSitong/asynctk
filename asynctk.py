@@ -1,6 +1,6 @@
 from tkinter import *
 import asyncio
-import typing
+from typing import Callable, Any, Coroutine, Optional
 
 
 class AsyncTk(Tk):
@@ -32,10 +32,10 @@ class AsyncTk(Tk):
         self.destroy()
 
 
-APP: typing.Optional[AsyncTk] = None
+APP: Optional[AsyncTk] = None
 
 
-def normal(func: typing.Callable[[any, any], typing.Coroutine]) -> typing.Callable:
+def normal(func: Callable[[any, any], Coroutine]):
     """
     将async函数转变为普通函数，可供tkinter绑定事件，或直接运行
     :param func: async函数会返回一个协程对象
@@ -56,5 +56,12 @@ def normal(func: typing.Callable[[any, any], typing.Coroutine]) -> typing.Callab
     return wrapper
 
 
-def async_bind(master, seq, func):
+def async_bind(master: Widget, seq: str, func: Callable[[any, any], Coroutine]):
+    """
+    等同于master.bind(seq, normal(func))
+    :param master: tkinter控件
+    :param seq: event patterns
+    :param func: async函数
+    :return: None
+    """
     master.bind(seq, normal(func))
